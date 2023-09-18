@@ -1,13 +1,5 @@
 <template>
   <div class="chart-doughnut box">
-    <TabButtons class="chart-doughnut__tab-buttons">
-      <TabButton :active="activeTab === 'wallet'" @click="activeTab = 'wallet'">
-        Crypto Wallet
-      </TabButton>
-      <TabButton :active="activeTab === 'exchange'" @click="activeTab = 'exchange'">
-        Crypto Exchange
-      </TabButton>
-    </TabButtons>
     <TabPanels>
       <TabPanel v-if="activeTab === 'wallet'" :active="true">
         <div class="chart-doughnut__main">
@@ -21,13 +13,26 @@
               :options="options"
             />
           </div>
-          <ul v-if="legendWallet.length" class="chart-doughnut__list">
-            <li class="chart-doughnut__item" v-for="item in legendWallet">
-              <span class="chart-doughnut__item-color" :style="{ backgroundColor: item.backgroundColor }"></span>
-              <span class="chart-doughnut__item-name">{{ item.label }}</span>
-              <span class="chart-doughnut__item-value">{{ item.value }}%</span>
-            </li>
-          </ul>
+          <div class="chart-doughnut__info">
+            <TabButtons class="chart-doughnut__tab-buttons">
+              <TabButton :active="activeTab === 'wallet'" @click="activeTab = 'wallet'">
+                Crypto Wallet
+              </TabButton>
+              <TabButton :active="activeTab === 'exchange'" @click="activeTab = 'exchange'">
+                Crypto Exchange
+              </TabButton>
+            </TabButtons>
+            <ul v-if="legendWallet.length" class="chart-doughnut__list">
+              <li class="chart-doughnut__item" v-for="item in legendWallet">
+                <span
+                  class="chart-doughnut__item-color"
+                  :style="{ backgroundColor: item.backgroundColor }"
+                ></span>
+                <span class="chart-doughnut__item-name">{{ item.label }}</span>
+                <span class="chart-doughnut__item-value">{{ item.value }}%</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </TabPanel>
       <TabPanel v-if="activeTab === 'exchange'" :active="true">
@@ -42,13 +47,26 @@
               :options="options"
             />
           </div>
-          <ul v-if="legendExchange.length" class="chart-doughnut__list">
-            <li class="chart-doughnut__item" v-for="item in legendExchange">
-              <span class="chart-doughnut__item-color" :style="{ backgroundColor: item.backgroundColor }"></span>
-              <span class="chart-doughnut__item-name">{{ item.label }}</span>
-              <span class="chart-doughnut__item-value">{{ item.value }}%</span>
-            </li>
-          </ul>
+          <div class="chart-doughnut__info">
+            <TabButtons class="chart-doughnut__tab-buttons">
+              <TabButton :active="activeTab === 'wallet'" @click="activeTab = 'wallet'">
+                Crypto Wallet
+              </TabButton>
+              <TabButton :active="activeTab === 'exchange'" @click="activeTab = 'exchange'">
+                Crypto Exchange
+              </TabButton>
+            </TabButtons>
+            <ul v-if="legendExchange.length" class="chart-doughnut__list">
+              <li class="chart-doughnut__item" v-for="item in legendExchange">
+                <span
+                  class="chart-doughnut__item-color"
+                  :style="{ backgroundColor: item.backgroundColor }"
+                ></span>
+                <span class="chart-doughnut__item-name">{{ item.label }}</span>
+                <span class="chart-doughnut__item-value">{{ item.value }}%</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </TabPanel>
     </TabPanels>
@@ -63,7 +81,7 @@ import {
   LinearScale,
   ArcElement,
   CategoryScale,
-  PointElement
+  PointElement,
 } from "chart.js";
 import { Doughnut } from "vue-chartjs";
 import TabButtons from "@/components/TabButtons.vue";
@@ -71,13 +89,7 @@ import TabButton from "@/components/TabButton.vue";
 import TabPanels from "@/components/TabPanels.vue";
 import TabPanel from "@/components/TabPanel.vue";
 
-ChartJS.register(
-  LineElement,
-  LinearScale,
-  ArcElement,
-  CategoryScale,
-  PointElement
-);
+ChartJS.register(LineElement, LinearScale, ArcElement, CategoryScale, PointElement);
 
 const canvas1 = ref(null);
 const activeTab = ref("wallet");
@@ -160,7 +172,7 @@ const legendWallet = computed(() => {
       label: dataWallet.labels[index],
       value,
       backgroundColor: dataWallet.datasets[0]?.backgroundColor[index],
-    }
+    };
   });
 });
 
@@ -170,7 +182,7 @@ const legendExchange = computed(() => {
       label: dataExchange.labels[index],
       value,
       backgroundColor: dataExchange.datasets[0]?.backgroundColor[index],
-    }
+    };
   });
 });
 </script>
@@ -192,10 +204,12 @@ const legendExchange = computed(() => {
     &-box
       width: 307px
 
-  &__list
-    margin-top: 32px
+  &__info
     margin-left: auto
     flex: 0 0 245px
+
+  &__list
+    margin-top: 32px
 
   &__item
     display: flex
@@ -222,4 +236,25 @@ const legendExchange = computed(() => {
 
     &-value
       margin-left: auto
+
+  @media (max-width: 991px)
+    padding: 35px 50px 45px
+
+  @media (max-width: 767px)
+    padding: 25px 20px
+
+    &__main
+      flex-direction: column
+      align-items: center
+
+    &__info
+      margin-top: 30px
+      margin-right: auto
+
+    &__canvas
+      transform: scale(0.95, 0.95)
+
+  @media (max-width: 360px)
+    &__canvas
+      transform: scale(0.8, 0.8)
 </style>

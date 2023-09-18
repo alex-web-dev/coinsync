@@ -154,4 +154,20 @@ onMounted(async () => {
 
   &__canvas
     height: 260px
+
+  @media (max-width: 991px)
+    padding: 32px 40px
+
+  @media (max-width: 767px)
+    padding: 20px 20px 15px 15px
+
+    &__header
+      margin-bottom: 20px
+      padding-left: 5px
+      flex-direction: column
+      align-items: flex-start
+
+    &__tab-buttons
+      margin-top: 15px
+      margin-left: 0
 </style>

@@ -33,6 +33,7 @@ const className = computed(() => [
   font-size: 14px
   color: #506d8e
   font-weight: 500
+  flex: 0 0 auto
 
   &--active
     background-color: #fff

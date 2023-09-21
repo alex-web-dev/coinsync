@@ -85,13 +85,11 @@ const formData = reactive({
     {
       type: "hidden",
       value: activeCoin,
-      placeholder: "Connect (test)",
       validation: { type: "required" },
     },
     {
       value: "",
       placeholder: "Connection name (optional)",
-      validation: { type: "required" },
     },
     {
       value: "",

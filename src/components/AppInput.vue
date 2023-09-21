@@ -57,6 +57,7 @@ async function paste() {
     background: #FCFCFC
     outline: none
     transition: border .3s
+    color: $color-black
 
     &:focus
       border-color: $color-primary

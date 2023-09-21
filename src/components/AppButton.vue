@@ -16,8 +16,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
-import { useSlots } from "vue";
+import { ref, reactive, useSlots } from "vue";
 
 const slots = useSlots();
 const props = defineProps({
@@ -45,6 +44,18 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  textHoverColor: {
+    type: String,
+    default: null,
+  },
+  textLine: {
+    type: String,
+    default: null,
+  },
+  textHoverLine: {
+    type: String,
+    default: null,
+  },
   icon: {
     type: Boolean,
     default: false,
@@ -61,10 +72,13 @@ const props = defineProps({
 const type = ref(props.to ? "router-link" : "button");
 const btnClass = reactive([
   props.color ? `btn--${props.color}` : "",
-  props.textColor ? `btn--text-${props.textColor}` : "",
   props.hoverColor ? `btn--hover-${props.hoverColor}` : "",
   props.size ? `btn--${props.size}` : "",
+  props.textColor ? `btn--text-${props.textColor}` : "",
   props.textSize ? `btn--text-${props.textSize}` : "",
+  props.textLine ? `btn--text-line-${props.textLine}` : "",
+  props.textHoverLine ? `btn--text-hover-line-${props.textHoverLine}` : "",
+  props.textHoverColor ? `btn--text-hover-${props.textHoverColor}` : "",
   props.hideText ? `btn--text-hide-${props.hideText}` : "",
   props.icon ? "btn--icon" : "",
   props.link ? "btn--link" : "",
@@ -88,7 +102,7 @@ const btnClass = reactive([
   cursor: pointer
   color: #fff
   font-weight: 500
-  transition: color 0.3s, background 0.3s
+  transition: color 0.3s, background 0.3s, box-shadow 0.3s
 
   &:hover
     background-color: #5c76ff
@@ -112,6 +126,12 @@ const btnClass = reactive([
 
     :deep(svg)
       transition: fill .3s
+
+  &:disabled
+    background-color: rgba(#d0d0d0, 0.5)
+    color: #fff
+    cursor: default
+    box-shadow: none
 
   &--link
     padding: 0
@@ -157,6 +177,9 @@ const btnClass = reactive([
   &--text-gray
     color: $color-gray
 
+  &--text-xxs
+    font-size: 12px
+
   &--text-xs
     font-size: 14px
 
@@ -168,6 +191,22 @@ const btnClass = reactive([
 
   &--text-xl
     font-size: 22px
+
+  &--text-line-under
+    text-decoration: underline
+
+  &--text-hover-line-under
+    &:hover
+      text-decoration: underline
+
+  &--text-hover-line-none
+    &:hover
+      text-decoration: none
+
+  &--text-hover-gray
+    &:hover
+      color: $color-gray
+    
 
   &--icon
     padding: 0

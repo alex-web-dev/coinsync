@@ -21,7 +21,23 @@
             :title="formTitle"
             @update-field="updateField"
             :data="formData.items"
-          />
+            submitText="Connect"
+            @submit="submitForm"
+            :disable-button="false"
+          >
+            <template #footer>
+              <AppButton
+                link
+                text-color="gray"
+                text-hover-color="gray"
+                text-size="xxs"
+                text-line="under"
+                text-hover-line="none"
+              >
+                Add another Crypto exchange
+              </AppButton>
+            </template>
+          </AppForm>
         </div>
         <div class="connect__learn">
           <LearnItem class="connect__learn-item">
@@ -65,28 +81,29 @@ import LearnItem from "@/components/LearnItem.vue";
 const coins = reactive(["Binance", "Bybit", "Kucoin", "Other"]);
 const activeCoin = ref(coins[0]);
 const formData = reactive({
-  isSent: false,
   items: [
     {
       type: "hidden",
       value: activeCoin,
       placeholder: "Connect (test)",
+      validation: { type: "required" },
     },
     {
       value: "",
       placeholder: "Connection name (optional)",
-      isError: false,
+      validation: { type: "required" },
     },
     {
       value: "",
       placeholder: "API Key",
-      isError: false,
       pasteBtn: true,
+      validation: { type: "required" },
     },
     {
       value: "",
       placeholder: "API Secret",
       pasteBtn: true,
+      validation: { type: "required" },
     },
   ],
 });
@@ -97,6 +114,16 @@ const formTitle = computed(() => {
 
 function updateField(index, value) {
   formData.items[index].value = value;
+}
+
+function submitForm() {
+  formData.items.forEach((item) => {
+    if (item.type === "hidden") {
+      return;
+    }
+
+    item.value = "";
+  });
 }
 </script>
 

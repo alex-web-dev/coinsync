@@ -68,12 +68,22 @@
   &--regular
     font-weight: 400
 
+  &--primary
+    color: $color-primary
+
 .text
   font-size: 18px
   line-height: 1.58
 
   p:not(:first-child)
     margin-top: 20px
+
+  a
+    color: #5873ff
+
+    &:hover
+      color: $color-primary
+      text-decoration: underline
 
   &--xs
     font-size: 14px

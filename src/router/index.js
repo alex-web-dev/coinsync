@@ -2,6 +2,8 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import OverviewView from "@/views/OverviewView.vue";
 import ConnectView from "@/views/ConnectView.vue";
+import RegistrationView from "@/views/RegistrationView.vue";
+import LoginView from "@/views/LoginView.vue";
 
 const DEFAULT_TITLE = 'Coinsync';
 
@@ -27,6 +29,22 @@ const router = createRouter({
       component: ConnectView,
       meta: {
         title: `${DEFAULT_TITLE} - Connect`,
+      }
+    },
+    {
+      path: "/registration",
+      name: "registration",
+      component: RegistrationView,
+      meta: {
+        title: `${DEFAULT_TITLE} - Registration`,
+      }
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: LoginView,
+      meta: {
+        title: `${DEFAULT_TITLE} - Login`,
       }
     },
   ],

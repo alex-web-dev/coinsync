@@ -17,24 +17,12 @@
 <script setup>
 import { ref, reactive } from "vue";
 
-const list = reactive([
-  {
-    text: "Assets Overview",
-    routerLink: { name: "overview" },
-  },
-  {
-    text: "Portfolio  Analitics",
-    routerLink: "#",
-  },
-  {
-    text: "Reporting",
-    routerLink: "#",
-  },
-  {
-    text: "User Guide",
-    routerLink: "#",
-  },
-]);
+defineProps({
+  list: {
+    type: Array,
+    required: true
+  }
+});
 const isActive = ref(false);
 
 function toggle() {

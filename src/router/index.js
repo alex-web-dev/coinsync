@@ -1,19 +1,24 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import OverviewView from "@/views/OverviewView.vue";
 import ConnectView from "@/views/ConnectView.vue";
 import RegistrationView from "@/views/RegistrationView.vue";
 import LoginView from "@/views/LoginView.vue";
+import LogoutView from "@/views/LogoutView.vue";
+import { useAuth } from "@/stores/auth";
 
-const DEFAULT_TITLE = 'Coinsync';
+const DEFAULT_TITLE = "Coinsync";
 
 const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
       name: "home",
       component: HomeView,
+      meta: {
+        auth: true,
+      },
     },
     {
       path: "/overview",
@@ -21,7 +26,8 @@ const router = createRouter({
       component: OverviewView,
       meta: {
         title: `${DEFAULT_TITLE} - Assets Overview`,
-      }
+        auth: true,
+      },
     },
     {
       path: "/connect",
@@ -29,7 +35,8 @@ const router = createRouter({
       component: ConnectView,
       meta: {
         title: `${DEFAULT_TITLE} - Connect`,
-      }
+        auth: true,
+      },
     },
     {
       path: "/registration",
@@ -37,7 +44,8 @@ const router = createRouter({
       component: RegistrationView,
       meta: {
         title: `${DEFAULT_TITLE} - Registration`,
-      }
+        auth: false,
+      },
     },
     {
       path: "/login",
@@ -45,7 +53,16 @@ const router = createRouter({
       component: LoginView,
       meta: {
         title: `${DEFAULT_TITLE} - Login`,
-      }
+        auth: false,
+      },
+    },
+    {
+      path: "/logout",
+      name: "logout",
+      component: LogoutView,
+      meta: {
+        title: `${DEFAULT_TITLE} - logout`,
+      },
     },
   ],
   scrollBehavior: function (to) {
@@ -64,6 +81,21 @@ const router = createRouter({
       };
     }
   },
+});
+
+router.beforeEach((to, _, next) => {
+  const requireAuth = to.meta.auth;
+  const storeAuth = useAuth();
+
+  if (requireAuth && storeAuth.isAuth) {
+    next();
+  } else if (requireAuth && !storeAuth.isAuth) {
+    next({ name: "login" });
+  } else if (requireAuth === false && storeAuth.isAuth) {
+    next({ name: "home" });
+  } else {
+    next();
+  }
 });
 
 router.afterEach((to) => {

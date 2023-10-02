@@ -3,17 +3,52 @@
     <div class="container">
       <div class="header__content">
         <AppLogo class="header__logo" />
-        <TheMenu class="header__menu" />
-        <UserPanel class="header__user-panel" />
+        <template v-if="storeAuth.isAuth">
+          <AppMenu class="header__menu" :list="menuList" />
+          <UserPanel class="header__user-panel" />
+        </template>
+        <AppMenu v-else class="header__menu" :list="menuListNotAuth" />
       </div>
     </div>
   </header>
 </template>
 
 <script setup>
-import TheMenu from "@/components/TheMenu.vue";
+import AppMenu from "@/components/AppMenu.vue";
 import UserPanel from "@/components/UserPanel.vue";
 import AppLogo from "@/components/AppLogo.vue";
+import { reactive } from 'vue';
+import { useAuth } from "@/stores/auth";
+
+const storeAuth = useAuth();
+const menuList = reactive([
+  {
+    text: "Assets Overview",
+    routerLink: { name: "overview" },
+  },
+  {
+    text: "Portfolio  Analitics",
+    routerLink: "#",
+  },
+  {
+    text: "Reporting",
+    routerLink: "#",
+  },
+  {
+    text: "User Guide",
+    routerLink: "#",
+  },
+]);
+const menuListNotAuth = reactive([
+  {
+    text: "Log in",
+    routerLink: { name: "login" },
+  },
+  {
+    text: "Register",
+    routerLink: { name: "registration" },
+  },
+]);
 </script>
 
 <style lang="sass" scoped>

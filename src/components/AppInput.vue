@@ -4,6 +4,7 @@
       class="input__field"
       :class="fieldClass"
       :type="type"
+      :name="name"
       :placeholder="placeholder"
       :value="modelValue"
       @input="emit('update:modelValue', $event.target.value)"
@@ -26,6 +27,10 @@ const props = defineProps({
   pasteBtn: {
     type: Boolean,
     default: false,
+  },
+  name: {
+    type: String,
+    default: null
   },
   type: {
     type: String,

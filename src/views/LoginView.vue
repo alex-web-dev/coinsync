@@ -11,9 +11,11 @@
         title-weight="medium"
         title-mb="25"
         :data="formData.items"
+        :error="storeAuth.error"
         @update-field="updateField"
         @submit="submitForm"
         submit-text="Log In"
+        :loading="formData.loading"
       >
         <template #forgot>
           <p class="text text--xs text--gray text--mt-10">
@@ -30,28 +32,46 @@
 import { reactive } from "vue";
 import AppLogin from "@/components/AppLogin.vue";
 import AppForm from "@/components/AppForm.vue";
+import { useAuth } from "@/stores/auth";
 
+const storeAuth = useAuth();
 const formData = reactive({
   items: [
     {
+      name: "username",
       value: "",
       placeholder: "Username or Email",
       validation: { type: "required" },
     },
     {
+      name: "password",
       type: "password",
       value: "",
       placeholder: "Password",
       validation: { type: "required" },
     },
   ],
+  loading: false
 });
 
+
 function updateField(index, value) {
+  storeAuth.clearError();
   formData.items[index].value = value;
 }
 
-function submitForm() {
+async function submitForm() {
+  formData.loading = true;
+  
+  const data = {}
+  formData.items.forEach((item) => {
+    data[item.name] = item.value;
+  });
+
+  await storeAuth.login(data);
+
+  formData.loading = false;
+
   formData.items.forEach((item) => {
     item.value = "";
   });

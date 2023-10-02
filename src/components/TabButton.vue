@@ -37,6 +37,7 @@ const className = computed(() => [
 
   &--active
     background-color: #fff
+    cursor: default
 
   &--text-uppercase
     text-transform: uppercase

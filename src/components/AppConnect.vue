@@ -9,11 +9,11 @@
               class="connect__btns-item"
               color="white"
               size="sm"
-              v-for="coin in coins"
-              :key="coin"
-              @click="activeCoin = coin"
+              v-for="exchange in exchanges"
+              :key="exchange"
+              @click="changeExchange(exchange)"
             >
-              Connect {{ coin }}
+              Connect <span class="connect__btns-item-value">{{ exchange }}</span>
             </AppButton>
           </div>
           <AppForm
@@ -77,27 +77,35 @@ import { ref, reactive, computed } from "vue";
 import AppButton from "@/components/AppButton.vue";
 import AppForm from "@/components/AppForm.vue";
 import LearnItem from "@/components/LearnItem.vue";
+import { useProfile } from "@/stores/profile";
+import { useText } from "@/hooks/text";
 
-const coins = reactive(["Binance", "Bybit", "Kucoin", "Other"]);
-const activeCoin = ref(coins[0]);
+const { capitalize } = useText();
+const storeProfile = useProfile();
+const exchanges = reactive(["binance", "bybit", "kucoin", "other"]);
+const activeExchange = ref(exchanges[0]);
 const formData = reactive({
   items: [
     {
+      name: "exchange",
       type: "hidden",
-      value: activeCoin,
+      value: activeExchange.value,
       validation: { type: "required" },
     },
     {
+      name: "connection",
       value: "",
       placeholder: "Connection name (optional)",
     },
     {
+      name: "api_key",
       value: "",
       placeholder: "API Key",
       pasteBtn: true,
       validation: { type: "required" },
     },
     {
+      name: "secret_key",
       value: "",
       placeholder: "API Secret",
       pasteBtn: true,
@@ -107,14 +115,28 @@ const formData = reactive({
 });
 
 const formTitle = computed(() => {
-  return `New portfolio: ${activeCoin.value}`;
+  return `New portfolio: ${capitalize(activeExchange.value)}`;
 });
 
 function updateField(index, value) {
   formData.items[index].value = value;
 }
 
+function changeExchange(name) {
+  const exchangeField = formData.items.find((item) => item.name === "exchange");
+  exchangeField.value = name;
+
+  activeExchange.value = name;
+}
+
 function submitForm() {
+  const data = {};
+  formData.items.forEach((item) => {
+    data[item.name] = item.value;
+  });
+
+  storeProfile.createExchangeCredential(data);
+
   formData.items.forEach((item) => {
     if (item.type === "hidden") {
       return;
@@ -149,6 +171,9 @@ function submitForm() {
       margin: 20px 10px 0
       width: 100%
       min-width: 204px
+
+      &-value
+        text-transform: capitalize
 
   &__form
     position: relative

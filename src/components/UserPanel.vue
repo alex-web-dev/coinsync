@@ -7,13 +7,13 @@
       <AppUser class="user-panel__user" />
       <ul class="user-panel__list">
         <li class="user-panel__item" v-for="menuItem in menu" :key="menuItem.text">
-          <a
+          <RouterLink
             class="link link--lg user-panel__link"
             :class="[menuItem.type ? `link--${menuItem.type}` : '']"
-            href="#"
+            :to="menuItem.routerLink"
           >
             {{ menuItem.text }}
-          </a>
+          </RouterLink>
         </li>
       </ul>
     </div>
@@ -28,23 +28,23 @@ const isActive = ref(false);
 const menu = reactive([
   {
     text: "Account settings",
-    link: "#",
+    routerLink: "#",
   },
   {
     text: "My crypto goals",
-    link: "#",
+    routerLink: "#",
   },
   {
     text: "My crypto diary",
-    link: "#",
+    routerLink: "#",
   },
   {
     text: "My crypto exchanges",
-    link: "#",
+    routerLink: "#",
   },
   {
     text: "Log out",
-    link: "#",
+    routerLink: { name: "logout" },
     type: "danger",
   },
 ]);

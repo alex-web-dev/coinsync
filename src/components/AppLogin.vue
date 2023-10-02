@@ -22,11 +22,6 @@
 import { useSlots } from "vue";
 
 const slots = useSlots();
-const emit = defineEmits(["updateField", "submitForm", "updateAgree"]);
-
-function updateField(index, value) {
-  emit('updateField', index, value);
-}
 
 defineProps({
   formTitle: {

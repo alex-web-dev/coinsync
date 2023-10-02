@@ -1,80 +1,46 @@
 <template>
   <div class="chart-doughnut box">
-    <TabPanels>
-      <TabPanel v-if="activeTab === 'wallet'" :active="true">
+    <TabPanels v-if="chartTabss">
+      <TabPanel
+        v-for="chartTab in chartTabss"
+        :active="chartTab.name === activeTab"
+        :key="chartTab"
+      >
         <div class="chart-doughnut__main">
           <div class="chart-doughnut__canvas-box">
             <Doughnut
               width="400"
               height="400"
               class="chart-doughnut__canvas"
-              ref="canvas1"
-              :data="dataWallet"
+              :data="chartTab.data"
               :options="options"
             />
           </div>
           <div class="chart-doughnut__info">
             <TabButtons class="chart-doughnut__tab-buttons">
-              <TabButton :active="activeTab === 'wallet'" @click="activeTab = 'wallet'">
-                Crypto Wallet
-              </TabButton>
-              <TabButton :active="activeTab === 'exchange'" @click="activeTab = 'exchange'">
-                Crypto Exchange
+              <TabButton
+                v-for="chartTabInner in chartTabss"
+                :active="chartTabInner.name === activeTab"
+                @click="activeTab = chartTabInner.name"
+              >
+                {{ chartTabInner.name }}
               </TabButton>
             </TabButtons>
-            <ul v-if="legendWallet.length" class="chart-doughnut__list">
-              <li class="chart-doughnut__item" v-for="item in legendWallet">
-                <span
-                  class="chart-doughnut__item-color"
-                  :style="{ backgroundColor: item.backgroundColor }"
-                ></span>
-                <span class="chart-doughnut__item-name">{{ item.label }}</span>
-                <span class="chart-doughnut__item-value">{{ item.value }}%</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </TabPanel>
-      <TabPanel v-if="activeTab === 'exchange'" :active="true">
-        <div class="chart-doughnut__main">
-          <div class="chart-doughnut__canvas-box">
-            <Doughnut
-              width="400"
-              height="400"
-              class="chart-doughnut__canvas"
-              ref="canvas"
-              :data="dataExchange"
-              :options="options"
+            <DoughnutList
+              class="chart-doughnut__list"
+              :labels="chartTab.data.labels"
+              :dataset="chartTab.data.datasets[0]"
             />
-          </div>
-          <div class="chart-doughnut__info">
-            <TabButtons class="chart-doughnut__tab-buttons">
-              <TabButton :active="activeTab === 'wallet'" @click="activeTab = 'wallet'">
-                Crypto Wallet
-              </TabButton>
-              <TabButton :active="activeTab === 'exchange'" @click="activeTab = 'exchange'">
-                Crypto Exchange
-              </TabButton>
-            </TabButtons>
-            <ul v-if="legendExchange.length" class="chart-doughnut__list">
-              <li class="chart-doughnut__item" v-for="item in legendExchange">
-                <span
-                  class="chart-doughnut__item-color"
-                  :style="{ backgroundColor: item.backgroundColor }"
-                ></span>
-                <span class="chart-doughnut__item-name">{{ item.label }}</span>
-                <span class="chart-doughnut__item-value">{{ item.value }}%</span>
-              </li>
-            </ul>
           </div>
         </div>
       </TabPanel>
     </TabPanels>
+    <div v-else class="text text--gray text--center text--sm">Not found</div>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, computed } from "vue";
+import { reactive, onMounted, computed, ref } from "vue";
 import {
   Chart as ChartJS,
   LineElement,
@@ -88,67 +54,35 @@ import TabButtons from "@/components/TabButtons.vue";
 import TabButton from "@/components/TabButton.vue";
 import TabPanels from "@/components/TabPanels.vue";
 import TabPanel from "@/components/TabPanel.vue";
+import DoughnutList from "@/components/DoughnutList.vue";
+import { useProfile } from "@/stores/profile";
+
+const storeProfile = useProfile();
+const exchanges = ref(null);
+const activeTab = ref(null);
+
+onMounted(async () => {
+  const allocation = await storeProfile.getAllocation();
+  if (!allocation || !allocation.exchanges) {
+    return;
+  }
+
+  exchanges.value = allocation.exchanges;
+  activeTab.value = exchanges.value[0].name;
+});
 
 ChartJS.register(LineElement, LinearScale, ArcElement, CategoryScale, PointElement);
 
-const canvas1 = ref(null);
-const activeTab = ref("wallet");
-const dataWallet = reactive({
-  labels: [
-    "NEAR Protocol",
-    "Litecoin",
-    "dYdX",
-    "Bitcoin",
-    "Avalanche",
-    "Cosmos",
-    "Polkadot",
-    "Others",
-  ],
-  datasets: [
-    {
-      data: [28.71, 26.48, 23.17, 8.77, 3.68, 2.98, 2.71, 3.5],
-      backgroundColor: [
-        "#2dbd21",
-        "#1cf1f1",
-        "#1653c9",
-        "#EF3D3D",
-        "#FC9333",
-        "#D939D2",
-        "#F7FC00",
-        "#CCCCCC",
-      ],
-      offset: 2,
-    },
-  ],
-});
-const dataExchange = reactive({
-  labels: [
-    "NEAR Protocol",
-    "Litecoin",
-    "dYdX",
-    "Bitcoin",
-    "Avalanche",
-    "Cosmos",
-    "Polkadot",
-    "Others",
-  ],
-  datasets: [
-    {
-      data: [34.71, 20.48, 17.17, 14.77, 2.68, 3.98, 1.71, 4.5],
-      backgroundColor: [
-        "#2dbd21",
-        "#1cf1f1",
-        "#1653c9",
-        "#EF3D3D",
-        "#FC9333",
-        "#D939D2",
-        "#F7FC00",
-        "#CCCCCC",
-      ],
-      offset: 1,
-    },
-  ],
-});
+const backgroundColor = reactive([
+  "#2dbd21",
+  "#1cf1f1",
+  "#1653c9",
+  "#EF3D3D",
+  "#FC9333",
+  "#D939D2",
+  "#F7FC00",
+  "#CCCCCC",
+]);
 const options = reactive({
   plugins: {
     legend: {
@@ -166,24 +100,32 @@ const options = reactive({
   responsive: true,
 });
 
-const legendWallet = computed(() => {
-  return dataWallet.datasets[0].data.map((value, index) => {
-    return {
-      label: dataWallet.labels[index],
-      value,
-      backgroundColor: dataWallet.datasets[0]?.backgroundColor[index],
-    };
-  });
-});
+const chartTabss = computed(() => {
+  if (!exchanges.value) {
+    return;
+  }
 
-const legendExchange = computed(() => {
-  return dataExchange.datasets[0].data.map((value, index) => {
+  const tabs = exchanges.value.map((exchange) => {
+    const sortedCurrencies = exchange.currencies.sort((a, b) => {
+      return parseFloat(b.value || 0) - parseFloat(a.value || 0);
+    });
+
     return {
-      label: dataExchange.labels[index],
-      value,
-      backgroundColor: dataExchange.datasets[0]?.backgroundColor[index],
+      name: exchange.name,
+      data: {
+        labels: sortedCurrencies.map((currencyItem) => currencyItem.currency),
+        datasets: [
+          {
+            data: sortedCurrencies.map((currencyItem) => currencyItem.value || 0),
+            backgroundColor,
+            offset: 2,
+          },
+        ],
+      },
     };
   });
+
+  return tabs;
 });
 </script>
 
@@ -203,6 +145,7 @@ const legendExchange = computed(() => {
   &__canvas
     &-box
       width: 307px
+      height: 307px
 
   &__info
     margin-left: auto
@@ -210,32 +153,6 @@ const legendExchange = computed(() => {
 
   &__list
     margin-top: 32px
-
-  &__item
-    display: flex
-    align-items: center
-    font-size: 12px
-    color: #000
-
-    &:not(:first-child)
-      margin-top: 12px
-
-    &-color
-      margin-right: 15px
-      flex: 0 0 auto
-      width: 20px
-      height: 20px
-      border-radius: 50%
-
-    &-name
-      display: flex
-      line-height: 1
-
-      &:not(:last-child)
-        margin-right: 15px
-
-    &-value
-      margin-left: auto
 
   @media (max-width: 991px)
     padding: 35px 50px 45px
